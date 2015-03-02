@@ -1,4 +1,10 @@
 <%@page buffer="none" session="false" taglibs="c,cms,fn" %>
+<%
+	/* Aleatorio para el class de forma que se puedan poner varios 
+	Random rand = new Random();
+	int  n = rand.nextInt(500) + 1;
+	*/
+%>
 <cms:formatter var="content" val="value" rdfa="rdfa">
 <c:if test="${value.Numero==''}">
 	<c:set var="total" value="5" />
@@ -6,7 +12,7 @@
 <c:if test="${value.Numero!=''}">
 	<c:set var="total" value="${value.Numero}" />
 </c:if>
-<c:set var="rand">${cms:vfs(pageContext).resource[cms.element.sitePath].structureId}</c:set>
+<c:set var="fileid">${cms:vfs(pageContext).resource[cms.element.sitePath].structureId}</c:set>
 <c:if test="${cms.element.settings.around==false}">
 <div class="lectorrss" style="width:${cms.element.settings.width}px;">
 </c:if>
@@ -17,7 +23,7 @@
 	<c:if test="${value.URL!=''}">
 		<script>
 		$(document).ready(function () {
-			lee_rss("${value.URL}",${total},"${rand}");
+			lee_rss("${value.URL}",${total},${rand});
 		});
 		</script>
 		<div class="rss-respuesta-${rand} rss-respuesta">

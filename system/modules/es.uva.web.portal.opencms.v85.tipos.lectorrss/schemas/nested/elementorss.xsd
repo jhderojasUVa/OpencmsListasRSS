@@ -1,0 +1,61 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	
+	<xsd:include schemaLocation="opencms://opencms-xmlcontent.xsd"/>
+
+	<xsd:element name="ElementoRsss" type="OpenCmsElementoRsss"/>
+	
+	<xsd:complexType name="OpenCmsElementoRsss">
+		<xsd:sequence>
+			<xsd:element name="ElementoRss" type="OpenCmsElementoRss" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="OpenCmsElementoRss">
+		<xsd:sequence>
+			<xsd:element name="URL" type="OpenCmsString" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Numero" type="OpenCmsString" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Porciento" type="OpenCmsString" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+		<xsd:attribute name="language" type="OpenCmsLocale" use="optional"/>
+	</xsd:complexType>
+
+	<xsd:annotation>
+		<xsd:appinfo>
+			<resourcebundles>
+				<!-- textos de ayuda -->
+				<xmlbundle name="es.uva.web.portal.opencms.v85.tipos.lectorrss.workplace.properties">
+					<bundle locale="en">
+						<resource key="label.ElementoRss.URL">Feed URL</resource>
+						<resource key="label.ElementoRss.URL.help">Feed URL of the RSS</resource>
+						<resource key="label.ElementoRss.Numero">Elements to show</resource>
+						<resource key="label.ElementoRss.Numero.help">Number of elements to show</resource>
+						<resource key="label.ElementoRss.Porciento">Percentil</resource>
+						<resource key="label.ElementoRss.Porciento.help">Percentil of how it will be showed</resource>
+					</bundle>
+					<bundle locale="es">
+						<resource key="label.ElementoRss.URL">URL del feed</resource>
+						<resource key="label.ElementoRss.URL.help">URL del feed de RSS</resource>
+						<resource key="label.ElementoRss.Numero">Elementos a mostrar</resource>
+						<resource key="label.ElementoRss.Numero.help">Numero de elementos a mostrar</resource>
+						<resource key="label.ElementoRss.Porciento">Tanto por ciento</resource>
+						<resource key="label.ElementoRss.Porciento.help">Tanto por ciento de peso para ser mostrado</resource>
+					</bundle>
+				</xmlbundle>
+			</resourcebundles>
+			<mappings>
+				
+			</mappings>
+			<defaults>
+				
+			</defaults>
+			<validationrules>
+				<!-- Reglas de validacion -->
+				<!-- Obligatorio -->
+				<rule element="URL" regex="^(https?)(://)(.*)" message="El formato de la URL del feed no es correcta o esta vacia" />
+				<rule element="Numero" regex="[1-500]" message="El numero de items ha de estar entre 1 y 500" />
+				<rule element="Porciento" regex="[1-100]" message="El tanto por ciento ha de estar entre 1 y 100. No hace falta poner %" />
+				<!-- Opcional -->
+			</validationrules>
+		</xsd:appinfo>
+	</xsd:annotation>  
+</xsd:schema>

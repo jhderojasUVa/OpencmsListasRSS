@@ -1,7 +1,8 @@
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
 	
 	<xsd:include schemaLocation="opencms://opencms-xmlcontent.xsd"/>
-
+	<xsd:include schemaLocation="opencms://system/modules/es.uva.web.portal.opencms.v85.tipos.lectorrss/schemas/nested/elementorss.xsd"/>
+	
 	<xsd:element name="LectorRsss" type="OpenCmsLectorRsss"/>
 	
 	<xsd:complexType name="OpenCmsLectorRsss">
@@ -12,8 +13,7 @@
 
 	<xsd:complexType name="OpenCmsLectorRss">
 		<xsd:sequence>
-			<xsd:element name="URL" type="OpenCmsString" minOccurs="1" maxOccurs="1"/>
-			<xsd:element name="Numero" type="OpenCmsString" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="RSS" type="OpenCmsElementoRss" minOccurs="1" maxOccurs="unbounded"/>
 		</xsd:sequence>
 		<xsd:attribute name="language" type="OpenCmsLocale" use="optional"/>
 	</xsd:complexType>
@@ -24,16 +24,12 @@
 				<!-- textos de ayuda -->
 				<xmlbundle name="es.uva.web.portal.opencms.v85.tipos.lectorrss.workplace.properties">
 					<bundle locale="en">
-						<resource key="label.LectorRss.URL">Feed URL</resource>
-						<resource key="label.LectorRss.URL.help">Feed URL of the RSS</resource>
-						<resource key="label.LectorRss.Numero">Elements to show</resource>
-						<resource key="label.LectorRss.Numero.help">Number of elements to show</resource>
+						<resource key="label.LectorRss.RSS">RSS element</resource>
+						<resource key="label.LectorRss.RSS.help">RSS element</resource>
 					</bundle>
 					<bundle locale="es">
-						<resource key="label.LectorRss.URL">URL del feed</resource>
-						<resource key="label.LectorRss.URL.help">URL del feed de RSS</resource>
-						<resource key="label.LectorRss.Numero">Elementos a mostrar</resource>
-						<resource key="label.LectorRss.Numero.help">Numero de elementos a mostrar</resource>
+						<resource key="label.LectorRss.RSS">Elemento RSS</resource>
+						<resource key="label.LectorRss.RSS.help">Elemento RSS</resource>
 					</bundle>
 				</xmlbundle>
 			</resourcebundles>
@@ -46,11 +42,12 @@
 			<validationrules>
 				<!-- Reglas de validacion -->
 				<!-- Obligatorio -->
-				<rule element="URL" regex="^(https?)(://)(.*)" message="El formato de la URL del feed no es correcta" />
+				
 				<!-- Opcional -->
 			</validationrules>
 			<formatters>
-				<formatter uri="/system/modules/es.uva.web.portal.opencms.v85.tipos.lectorrss/formatters/center.jsp" type="center" minwidth="300" />
+				<formatter uri="/system/modules/es.uva.web.portal.opencms.v85.tipos.lectorrss/formatters/center.jsp" type="center" />
+				<formatter uri="/system/modules/es.uva.web.portal.opencms.v85.tipos.lectorrss/formatters/center.jsp" type="content" />
 				<formatter uri="/system/modules/es.uva.web.portal.opencms.v85.tipos.lectorrss/formatters/right.jsp" type="right" />
   			</formatters>
 			<settings>
@@ -60,6 +57,7 @@
 			<headincludes>
 				<headinclude type="css" uri="/system/modules/es.uva.web.portal.opencms.v85.tipos.lectorrss/resources/css/rss.css"/>
 				<headinclude type="javascript" uri="/system/modules/es.uva.web.portal.opencms.v85.tipos.lectorrss/resources/js/lector.js"/>
+				<headinclude type="javascript" uri="/system/modules/es.uva.web.portal.opencms.v85.tipos.lectorrss/resources/js/jquery.colorbox-min.js"/>
 				<headinclude type="javascript" uri="https://www.google.com/jsapi"/>
 			</headincludes>
 		</xsd:appinfo>
