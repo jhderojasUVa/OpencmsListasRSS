@@ -62,12 +62,44 @@ function lee_rss_array(datos_array, rand) {
 	// datos_array = datos del array formato [url, elementos, peso]
 	// rand = identificador del div
 	
+	var resultado_sin_ordenar = new Object();
+	
+	var total_elementos_feed;
+	
+	// Recolocamos por si los indices estan mal
+	//datos_array = recolocar_array (datos_array);
+	
 	for (i=0; i<=datos_array.length; i++) {
 		var feed = new google.feeds.Feed(datos_array[i]["url"], datos_array[i]["total"]);
 		feed.setNumEntries(datos_array[i]["total"]);
 		
 		feed.load(function (data)) {
-		
+			for (var i2=0; i2<data.feed.entries.length; i2++) {
+				entry = data.feed.entries[i];
+				
+				resultado_sin_ordenar["titulo"] = data.feed.title;
+				resultado_sin_ordenar["url"] = datos_array[i]["url"];
+				resultado_sin_ordenar["total_orden"] = datos_array[i]["total"];
+				resultado_sin_ordenar["entrada"]["title"] = entry.title;
+				resultado_sin_ordenar["entrada"]["contentSnippet"] = entry.contentSnippet;
+				resultado_sin_ordenar["entrada"]["content"] = entry.content;
+				resultado_sin_ordenar["entrada"]["link"] = entry.link;
+				
+			}
+			total_elementos_feed += data.entries.lenght;
+			
+			/* COMENTADO PARA NO PERDERLO
+			resultado_sin_ordenar[i]["titulo"] = data.feed.title;
+			resultado_sin_ordenar[i]["url"] = datos_array[i]["url"];
+			resultado_sin_ordenar[i]["total"] = datos_array[i]["total"];
+			for (var i2=0; i2<data.feed.entries.length; i2++) {
+				entry = data.feed.entries[i];
+				resultado_sin_ordenar[i][i2]["entry"]["title"] = entry.title;
+				resultado_sin_ordenar[i][i2]["entry"]["contentSnippet"] = entry.contentSnippet;
+				resultado_sin_ordenar[i][i2]["entry"]["content"] = entry.content;
+				resultado_sin_ordenar[i][i2]["entry"]["link"] = entry.link;
+			}
+			*/
 		}
 	}
 }
@@ -76,7 +108,7 @@ function total_elementos_sin_asignar (datos_array) {
 	// funcion que devuelve el total de elementos sin asignar el peso
 	var total = 0;
 	for (i=0; i<=datos_array.lenght; i++) {
-		if (datos_arrau[i]["total"]) {
+		if (datos_array[i]["total"]) {
 			total ++;
 		}
 	}
@@ -122,3 +154,56 @@ function recolocar_array (datos_array) {
 	
 	return datos_array;
 }
+
+function ordenar_arrays (datos_hash, total_elementos_feed) {
+	// Funcion que reordena los arrays con las entryes y escupe uno
+	// datos_array = array desordenado
+}
+
+function ordenar_hash() {
+	// Funcion/Objeto que ordena un hash a lo bruto
+	var keys = [];
+	var vals = [];
+	
+	return {
+		push: function (k, v) {
+			if (!vals[k]) {
+				key.push(k);
+			}
+			vals[k] = v;
+		},
+		insert: function (pos, k, v) {
+			if (!vals[k]) {
+				keys.splice(pos, 0, k);
+				vals[k] = v;
+			}
+		},
+		val: function(k) {
+			return vals[k];
+		},
+		lenght: function() {
+			return keys.lenght;
+		},
+		keys: function() {
+			return keys;
+		},
+		values: function() {
+			return vals
+		}
+	};
+}
+
+/*
+Funcion prototipo de hash
+
+String.prototype.hashCode = function() {
+  var hash = 0, i, chr, len;
+  if (this.length == 0) return hash;
+  for (i = 0, len = this.length; i < len; i++) {
+    chr   = this.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+};
+*/
