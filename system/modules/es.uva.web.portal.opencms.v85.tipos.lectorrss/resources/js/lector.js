@@ -158,6 +158,8 @@ function recolocar_array (datos_array) {
 function ordenar_arrays (datos_hash, total_elementos_feed) {
 	// Funcion que reordena los arrays con las entryes y escupe uno
 	// datos_array = array desordenado
+	
+	var array_ordenado = new Object();
 }
 
 function ordenar_hash() {
