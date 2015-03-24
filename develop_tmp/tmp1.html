@@ -1,0 +1,199 @@
+<!doctype html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">google.load("feeds", "1");</script>
+<script>
+var rss_hash = {
+	entrada: [],
+	rellenar: function(urls, total) {
+		for (var aux=0; aux<urls.length; aux++) {
+
+			
+			url = urls[aux]["url"];
+			peso_cosa = urls[aux]["peso"];
+			var feed = new google.feeds.Feed(url, peso_cosa, total);
+			var url_feed = url;
+			
+			console.log("Antes del meollo");
+			
+			
+			
+			
+			feed.setNumEntries(total);
+			
+			feed.load(function (data) {
+				
+				//console.log("aux ="+aux);
+				//url_feed = urls[aux]["url"];
+				//peso_cosa = urls[aux]["peso"];
+				
+				for (var i=0; i< data.feed.entries.length; i++) {
+					var entry = data.feed.entries[i];
+					
+					rss_hash.entrada[rss_hash.entrada.length] = {
+						peso: peso_cosa,
+						title_feed: data.feed.title,
+						link_feed: url_feed,
+						title: data.feed.entries[i].title,
+						link: data.feed.entries[i].link,
+						contentSnippet: data.feed.entries[i].contentSnippet,
+						content: data.feed.entries[i].content
+					};
+				} // Fin de rellenar las entradas
+				
+			});
+			
+	
+		} // Fin del for que lista las urls
+	},
+	ordenar: function() {
+		rss_hash.entrada.sort(function(a,b) {
+			//console.log("a.title="+a.title+"("+a.peso+") | b.title="+b.title+" ("+b.peso+")");
+			if (a.peso > b.peso) {
+				return 1;
+			}
+			if (a.peso < b.peso) {
+				return -1;
+			}
+			return 0;
+		});
+	}, // Fin de ordenar
+	/*ordenar_consecutivos: function() {
+		rss_hash.entrada.sort(function(a,b) {
+			return a.peso - b.peso;
+		}
+	}, // Fin ordenar consecutivos*/
+};
+
+function caca() {
+	var feedControl = new google.feeds.FeedControl();
+	feedControl.addFeed("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml", "Apple noseque");
+	feedControl.addFeed("http://www.uva.es/opencms/rss/novedades_uva.html", "Novedades");
+	feedControl.addFeed("http://comunicacion.uva.es/opencms/rss/lauvainforma.html", "UVa Informa");
+	feedControl.addFeed("http://comunicacion.uva.es/opencms/rss/comunicacionparalosmedios.html", "UVa en los medios");
+	feedControl.draw(document.getElementById("feedControl"));
+}
+
+function rss(url, total) {
+	rss_hash.rellenar(url,total);
+}
+
+
+function buscar() {
+	$("#buscador").submit(function(event){
+		event.preventDefault();
+		url = $("#buscador #url").val();
+	});
+}
+
+function escribir() {
+	if (puntos < 3) {
+		$("#respuesta").append(".");
+		puntos++;
+	} else {
+		$("#respuesta").html("cargando");
+		puntos = 0;
+	}
+}
+
+$(document).ready(function(){	
+	var otro_hash = [];
+	//var url[] = ["http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml", "http://www.uva.es/opencms/rss/novedades_uva.html", "http://comunicacion.uva.es/opencms/rss/lauvainforma.html", "http://comunicacion.uva.es/opencms/rss/comunicacionparalosmedios.html"];
+	var url = [];
+	url[url.length] = {url: "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml", peso: 5};
+	url[url.length] = {url: "http://www.uva.es/opencms/rss/novedades_uva.html", peso: 12};
+	url[url.length] = {url: "http://comunicacion.uva.es/opencms/rss/lauvainforma.html", peso: 2};
+	url[url.length] = {url: "http://comunicacion.uva.es/opencms/rss/comunicacionparalosmedios.html", peso: 1};
+	
+	//console.log("total ="+url.length);
+	
+	rss(url,5);
+	var puntos = 0;
+	$("#respuesta .espera").html("cargando");
+	setInterval(function(){
+		if (puntos < 3) {
+		$("#respuesta .espera").append(".");
+		puntos++;
+	} else {
+		$("#respuesta .espera").html("cargando");
+		puntos = 0;
+	}
+	},400);
+	setTimeout(function(){
+		rss_hash.ordenar();
+		var respuesta="";
+		for (var i=0; i<rss_hash.entrada.length; i++) {
+			var cosa = rss_hash.entrada[i];
+			console.log (cosa.title+" | "+cosa.link);
+			respuesta+="<li><a href='"+cosa.link+"'>"+cosa.title+"</a></li>";
+		}
+		$("#respuesta .espera").toggle();
+		$("#respuesta").html("<ul>"+respuesta+"</ul>");
+		//alert("BURP!")
+	},3000);
+	
+	//caca();
+});
+</script>
+<style>
+
+.lectorrss {
+	font: 12px Arial;
+	width: 500px;
+	padding: 5px 3px;
+	margin-top: 15px;
+	color: white;
+	background-color: #464137;
+	/*border-top: 5px solid #343434;*/
+	border: 1px solid white;
+	box-shadow: 1px 1px 1px #ddd;
+}
+
+.lectorrss h2 {
+	margin: -6px -3px 3px;
+	padding: 2px 5px;
+	background-color: #566e92;
+}
+
+.lectorrss ul, .lectorrss li {
+	margin: 0;
+	padding: 0;
+}
+
+.lectorrss ul li {
+	list-style-type: none;
+	margin-left: 2px;
+	margin-right: 2px;
+	padding: 0;
+}
+
+.lectorrss a {
+	color: white;
+	text-decoration: none;
+}
+
+.lectorrss a:hover {
+	text-decoration: underline;
+}
+
+</style>
+</head>
+<body>
+<div id="buscador">
+<form action="javascript: buscar()">
+<input type="text" name="url" id="url" value="http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml"> - <input type="submit" id="boton" value="dale">
+</form>
+</div>
+
+<div class="lectorrss">
+	<h2>Titulo de la lista</h2>
+	<div id="respuesta">
+		<div class="espera"></div>
+	</div>
+</div>
+
+<div id="feedControl"></div>
+</body>
+</html>
