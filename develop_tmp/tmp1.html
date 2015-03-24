@@ -9,26 +9,17 @@ var rss_hash = {
 	entrada: [],
 	rellenar: function(urls, total) {
 		for (var aux=0; aux<urls.length; aux++) {
-
-			
+		
 			url = urls[aux]["url"];
 			peso_cosa = urls[aux]["peso"];
 			var feed = new google.feeds.Feed(url, peso_cosa, total);
-			var url_feed = url;
-			
-			console.log("Antes del meollo");
-			
-			
-			
+			var url_feed = url;		
 			
 			feed.setNumEntries(total);
 			
 			feed.load(function (data) {
 				
-				//console.log("aux ="+aux);
-				//url_feed = urls[aux]["url"];
-				//peso_cosa = urls[aux]["peso"];
-				
+	
 				for (var i=0; i< data.feed.entries.length; i++) {
 					var entry = data.feed.entries[i];
 					
@@ -44,13 +35,11 @@ var rss_hash = {
 				} // Fin de rellenar las entradas
 				
 			});
-			
-	
+
 		} // Fin del for que lista las urls
 	},
 	ordenar: function() {
 		rss_hash.entrada.sort(function(a,b) {
-			//console.log("a.title="+a.title+"("+a.peso+") | b.title="+b.title+" ("+b.peso+")");
 			if (a.peso > b.peso) {
 				return 1;
 			}
@@ -60,11 +49,7 @@ var rss_hash = {
 			return 0;
 		});
 	}, // Fin de ordenar
-	/*ordenar_consecutivos: function() {
-		rss_hash.entrada.sort(function(a,b) {
-			return a.peso - b.peso;
-		}
-	}, // Fin ordenar consecutivos*/
+
 };
 
 function caca() {
@@ -88,6 +73,41 @@ function buscar() {
 	});
 }
 
+function cargando() {
+	var puntos = 0;
+	$("#respuesta .espera").html("cargando");
+	setInterval(function(){
+		if (puntos < 3) {
+		$("#respuesta .espera").append(".");
+		puntos++;
+	} else {
+		$("#respuesta .espera").html("cargando");
+		puntos = 0;
+	}
+	},400);
+}
+
+function pintar_respuesta() {
+	var respuesta="";
+	for (var i=0; i<rss_hash.entrada.length; i++) {
+		var cosa = rss_hash.entrada[i];
+		console.log (cosa.title+" | "+cosa.link);
+		respuesta+="<li><strong><a href='"+cosa.link_feed+"' target='_blank' class='feed_link'>"+cosa.title_feed+"</a></strong> <a href='"+cosa.link+"'>"+cosa.title+"</a></li>";
+	}
+	$("#respuesta .espera").hide();
+	$("#respuesta").html("<ul>"+respuesta+"</ul>");
+}
+
+function again() {
+	$(".recargar").addClass("recargar_gira");
+	$("#respuesta").html("<div class=\"espera\"></div>");
+	setTimeout(function(){
+		rss_hash.ordenar();
+		pintar_respuesta();
+		$(".recargar").removeClass("recargar_gira");
+	},5000);
+}
+
 function escribir() {
 	if (puntos < 3) {
 		$("#respuesta").append(".");
@@ -107,35 +127,21 @@ $(document).ready(function(){
 	url[url.length] = {url: "http://comunicacion.uva.es/opencms/rss/lauvainforma.html", peso: 2};
 	url[url.length] = {url: "http://comunicacion.uva.es/opencms/rss/comunicacionparalosmedios.html", peso: 1};
 	
-	//console.log("total ="+url.length);
 	
 	rss(url,5);
-	var puntos = 0;
-	$("#respuesta .espera").html("cargando");
-	setInterval(function(){
-		if (puntos < 3) {
-		$("#respuesta .espera").append(".");
-		puntos++;
-	} else {
-		$("#respuesta .espera").html("cargando");
-		puntos = 0;
-	}
-	},400);
+	cargando();
+	
 	setTimeout(function(){
 		rss_hash.ordenar();
-		var respuesta="";
-		for (var i=0; i<rss_hash.entrada.length; i++) {
-			var cosa = rss_hash.entrada[i];
-			console.log (cosa.title+" | "+cosa.link);
-			respuesta+="<li><a href='"+cosa.link+"'>"+cosa.title+"</a></li>";
-		}
-		$("#respuesta .espera").toggle();
-		$("#respuesta").html("<ul>"+respuesta+"</ul>");
-		//alert("BURP!")
+		pintar_respuesta();
 	},3000);
 	
-	//caca();
-});
+	setTimeout(function(){
+		// Mostrar recargar en caso de que pase tiempo
+		$(".recargar").toggle(800);
+	},8000);
+
+})
 </script>
 <style>
 
@@ -178,17 +184,33 @@ $(document).ready(function(){
 	text-decoration: underline;
 }
 
+.lectorrss a.feed_link {
+	color: #928d82;
+}
+
+.recargar {
+	display: none;
+	float: right;
+	margin-right: 5px;
+	-webkit-transition: all 4s ease-out;  /* Chrome 1-25, Safari 3.2+ */
+    -moz-transition: all 4s ease-out;  /* Firefox 4-15 */
+    -o-transition: all 4s ease-out;  /* Opera 10.50Ð12.00 */
+    transition: all 4s ease-out;  /* Chrome 26, Firefox 16+, IE 10+, Opera 12.50+ */
+}
+
+.recargar_gira {
+	-webkit-transform: rotate(1080deg);  /* Chrome, Safari 3.1+ */
+    -moz-transform: rotate(1080deg);  /* Firefox 3.5-15 */
+    -ms-transform: rotate(1080deg);  /* IE 9 */
+    -o-transform: rotate(1080deg);  /* Opera 10.50-12.00 */
+    transform: rotate(1080deg);  /* Firefox 16+, IE 10+, Opera 12.50+ */
+}
+
 </style>
 </head>
 <body>
-<div id="buscador">
-<form action="javascript: buscar()">
-<input type="text" name="url" id="url" value="http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml"> - <input type="submit" id="boton" value="dale">
-</form>
-</div>
-
 <div class="lectorrss">
-	<h2>Titulo de la lista</h2>
+	<h2>Titulo de la lista<div class="recargar"><a href="#" onclick="javascript:again();"><img src="recargar.png" width="20" align="absmiddle" alt="recargar"/></a></div></h2>
 	<div id="respuesta">
 		<div class="espera"></div>
 	</div>
